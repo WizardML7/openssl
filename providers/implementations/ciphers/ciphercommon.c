@@ -31,6 +31,7 @@ static const OSSL_PARAM cipher_known_gettable_params[] = {
     OSSL_PARAM_int(OSSL_CIPHER_PARAM_CTS, NULL),
     OSSL_PARAM_int(OSSL_CIPHER_PARAM_TLS1_MULTIBLOCK, NULL),
     OSSL_PARAM_int(OSSL_CIPHER_PARAM_HAS_RAND_KEY, NULL),
+    OSSL_PARAM_int(OSSL_CIPHER_PARAM_SECURITY_CATEGORY, NULL),
     OSSL_PARAM_END
 };
 const OSSL_PARAM *ossl_cipher_generic_gettable_params(ossl_unused void *provctx)
@@ -94,6 +95,7 @@ int ossl_cipher_generic_get_params(OSSL_PARAM params[], unsigned int md,
         ERR_raise(ERR_LIB_PROV, PROV_R_FAILED_TO_SET_PARAMETER);
         return 0;
     }
+    //Add something like if kbits set number
     return 1;
 }
 
