@@ -1,6 +1,8 @@
 # Ignore editor artefacts
 /.dir-locals.el
 
+/.vscode
+
 # Top level excludes
 /Makefile.in
 /Makefile
