@@ -106,6 +106,7 @@ int ossl_cipher_generic_get_params(OSSL_PARAM params[], unsigned int md,
         } else if (kbits == 256) {
             sec_category = 5;
         }
+        OSSL_PARAM_set_int(p,sec_category);
 
         if (!OSSL_PARAM_set_int(p, sec_category)) {
             ERR_raise(ERR_LIB_PROV, PROV_R_FAILED_TO_SET_PARAMETER);

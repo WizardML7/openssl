@@ -38,6 +38,21 @@ int ossl_digest_default_get_params(OSSL_PARAM params[], size_t blksz,
         ERR_raise(ERR_LIB_PROV, PROV_R_FAILED_TO_SET_PARAMETER);
         return 0;
     }
+    p = OSSL_PARAM_locate(params, OSSL_DIGEST_PARAM_SECURITY_CATEGORY);
+    if (p != NULL) {
+        int sec_category = 0;
+
+        if (blksz == 256) {
+            sec_category = 2;
+        } else if (blksz == 384) {
+            sec_category = 4;
+        }
+
+        if (!OSSL_PARAM_set_int(p, (flags & sec_category))) {
+            ERR_raise(ERR_LIB_PROV, PROV_R_FAILED_TO_SET_PARAMETER);
+            return 0;
+        }
+    }
     return 1;
 }
 
