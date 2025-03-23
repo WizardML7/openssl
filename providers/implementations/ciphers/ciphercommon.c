@@ -637,6 +637,11 @@ int ossl_cipher_generic_get_ctx_params(void *vctx, OSSL_PARAM params[])
         ERR_raise(ERR_LIB_PROV, PROV_R_FAILED_TO_SET_PARAMETER);
         return 0;
     }
+    p = OSSL_PARAM_locate(params, OSSL_CIPHER_PARAM_SECURITY_CATEGORY);
+    if (p != NULL && !OSSL_PARAM_set_uint(p, ctx->security_category)) {
+        ERR_raise(ERR_LIB_PROV, PROV_R_FAILED_TO_SET_PARAMETER);
+        return 0;
+    }
     return 1;
 }
 
@@ -729,4 +734,15 @@ void ossl_cipher_generic_initkey(void *vctx, size_t kbits, size_t blkbits,
     ctx->blocksize = blkbits / 8;
     if (provctx != NULL)
         ctx->libctx = PROV_LIBCTX_OF(provctx); /* used for rand */
+    
+    if (kbits == 128)
+        ctx->security_category = 1;
+    else if (kbits == 192)
+    {
+        ctx->security_category = 3;
+    }
+    else if (kbits == 256)
+    {
+        ctx->security_category = 5;
+    }
 }
