@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 # Author: Min Zhou <zhoumin@loongson.cn>
-# Copyright 2023-2024 The OpenSSL Project Authors. All Rights Reserved.
+# Copyright 2023-2025 The OpenSSL Project Authors. All Rights Reserved.
 #
 # Licensed under the Apache License 2.0 (the "License").  You may not use
 # this file except in compliance with the License.  You can obtain a copy
@@ -37,8 +37,9 @@ my ($xr0,$xr1,$xr2,$xr3,$xr4,$xr5,$xr6,$xr7,$xr8,$xr9,$xr10,
     $xr20,$xr21,$xr22,$xr23,$xr24,$xr25,$xr26,$xr27,$xr28,
     $xr29,$xr30,$xr31)=map("\$xr$_",(0..31));
 
+# $output is the last argument if it looks like a file (it has an extension)
 my $output;
-for (@ARGV) {	$output=$_ if (/\w[\w\-]*\.\w+$/);	}
+$output = $#ARGV >= 0 && $ARGV[$#ARGV] =~ m|\.\w+$| ? pop : undef;
 open STDOUT,">$output";
 
 # Input parameter block

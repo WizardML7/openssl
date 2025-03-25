@@ -23,12 +23,14 @@ OpenSSL Releases
 OpenSSL 3.5
 -----------
 
+### Major changes between OpenSSL 3.5 and OpenSSL 3.6 [under development]
+
+  * none
+
 ### Major changes between OpenSSL 3.4 and OpenSSL 3.5 [under development]
 
 OpenSSL 3.5.0 is a feature release adding significant new functionality to
 OpenSSL.
-
-This release is in development.
 
 This release incorporates the following potentially significant or incompatible
 changes:
@@ -36,24 +38,50 @@ changes:
   * Default encryption cipher for the `req`, `cms`, and `smime` applications
     changed from `des-ede3-cbc` to `aes-256-cbc`.
 
+  * The default TLS supported groups list has been changed to include and
+    prefer hybrid PQC KEM groups. Some practically unused groups were removed
+    from the default list.
+
+  * The default TLS keyshares have been changed to offer X25519MLKEM768 and
+    and X25519.
+
+  * All `BIO_meth_get_*()` functions were deprecated.
+
 This release adds the following new features:
 
-  * Allow the FIPS provider to optionally use the `JITTER` seed source.
-    Because this seed source is not part of the OpenSSL FIPS validations,
-    it should only be enabled after the [jitterentropy-library] has been
-    assessed for entropy quality.  Moreover, the FIPS provider including
-    this entropy source will need to obtain an [ESV] from the [CMVP] before
-    FIPS compliance can be claimed.  Enable this using the configuration
-    option `enable-fips-jitter`.
+  * Support for server side QUIC (RFC 9000)
+
+  * Support for 3rd party QUIC stacks including 0-RTT support
+
+  * Support for PQC algorithms (ML-KEM, ML-DSA and SLH-DSA)
+
+  * A new configuration option `no-tls-deprecated-ec` to disable support for
+    TLS groups deprecated in RFC8422
+
+  * A new configuration option `enable-fips-jitter` to make the FIPS provider
+    to use the `JITTER` seed source
+
+  * Support for central key generation in CMP
+
+  * Support added for opaque symmetric key objects (EVP_SKEY)
+
+  * Support for multiple TLS keyshares and improved TLS key establishment group
+    configurability
+
+  * API support for pipelining in provided cipher algorithms
 
 OpenSSL 3.4
 -----------
 
-### Major changes between OpenSSL 3.4.0 and OpenSSL 3.4.1 [under development]
+### Major changes between OpenSSL 3.4.0 and OpenSSL 3.4.1 [11 Feb 2025]
 
-This release is in development.
+OpenSSL 3.4.1 is a security patch release. The most severe CVE fixed in this
+release is High.
 
 This release incorporates the following bug fixes and mitigations:
+
+  * Fixed RFC7250 handshakes with unauthenticated servers don't abort as expected.
+    ([CVE-2024-12797])
 
   * Fixed timing side-channel in ECDSA signature computation.
     ([CVE-2024-13176])
@@ -111,7 +139,7 @@ This release adds the following new features:
   * Support for integrity-only cipher suites TLS_SHA256_SHA256 and
     TLS_SHA384_SHA384 in TLS 1.3, as defined in RFC 9150
 
-  * Support for requesting CRL in CMP
+  * Support for retrieving certificate request templates and CRLs in CMP
 
   * Support for additional X.509v3 extensions related to Attribute Certificates
 
@@ -222,6 +250,8 @@ This release adds the following new features:
 
   * Added X509_STORE_get1_objects to avoid issues with the existing
     X509_STORE_get0_objects API in multi-threaded applications.
+
+  * Support for using certificate profiles and extened delayed delivery in CMP
 
 This release incorporates the following potentially significant or incompatible
 changes:

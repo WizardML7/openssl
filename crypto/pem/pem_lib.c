@@ -1,5 +1,5 @@
 /*
- * Copyright 1995-2023 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 1995-2025 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -356,9 +356,8 @@ PEM_ASN1_write_bio_internal(
         dsize = 0;
         goto err;
     }
-    /* dsize + 8 bytes are needed */
-    /* actually it needs the cipher block size extra... */
-    data = OPENSSL_malloc((unsigned int)dsize + 20);
+    /* Allocate enough space for one extra cipher block */
+    data = OPENSSL_malloc((unsigned int)dsize + EVP_MAX_BLOCK_LENGTH);
     if (data == NULL)
         goto err;
     p = data;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2024 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2008-2025 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -1011,7 +1011,7 @@ int cms_main(int argc, char **argv)
                 goto end;
 
             pctx = CMS_RecipientInfo_get0_pkey_ctx(ri);
-            if (kparam != NULL) {
+            if (pctx != NULL && kparam != NULL) {
                 if (!cms_set_pkey_param(pctx, kparam->param))
                     goto end;
             }

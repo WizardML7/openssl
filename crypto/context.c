@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -9,6 +9,7 @@
 
 #include "crypto/cryptlib.h"
 #include <openssl/conf.h>
+#include <openssl/trace.h>
 #include "internal/thread_once.h"
 #include "internal/property.h"
 #include "internal/cryptlib.h"
@@ -107,6 +108,7 @@ static int context_init(OSSL_LIB_CTX *ctx)
     ctx->evp_method_store = ossl_method_store_new(ctx);
     if (ctx->evp_method_store == NULL)
         goto err;
+    OSSL_TRACE1(QUERY, "context_init: allocating store %p\n", ctx->evp_method_store);
 
 #ifndef FIPS_MODULE
     /* P2. Must be freed before the provider store is freed */

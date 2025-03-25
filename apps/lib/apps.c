@@ -1,5 +1,5 @@
 /*
- * Copyright 1995-2024 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 1995-2025 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -192,7 +192,11 @@ int set_nameopt(const char *arg)
 unsigned long get_nameopt(void)
 {
     return
-        nmflag_set ? nmflag : XN_FLAG_SEP_CPLUS_SPC | ASN1_STRFLGS_UTF8_CONVERT;
+        nmflag_set ? nmflag : XN_FLAG_SEP_CPLUS_SPC | XN_FLAG_FN_SN
+                              | ASN1_STRFLGS_ESC_CTRL
+                              | ASN1_STRFLGS_UTF8_CONVERT
+                              | ASN1_STRFLGS_DUMP_UNKNOWN
+                              | ASN1_STRFLGS_DUMP_DER;
 }
 
 void dump_cert_text(BIO *out, X509 *x)
@@ -898,6 +902,10 @@ static const char *format2string(int format)
         return "PEM";
     case FORMAT_ASN1:
         return "DER";
+    case FORMAT_PVK:
+        return "PVK";
+    case FORMAT_MSBLOB:
+        return "MSBLOB";
     }
     return NULL;
 }
@@ -2515,18 +2523,24 @@ static STACK_OF(X509_CRL) *crls_http_cb(const X509_STORE_CTX *ctx,
     crldp = X509_get_ext_d2i(x, NID_crl_distribution_points, NULL, NULL);
     crl = load_crl_crldp(crldp);
     sk_DIST_POINT_pop_free(crldp, DIST_POINT_free);
-    if (!crl) {
-        sk_X509_CRL_free(crls);
-        return NULL;
-    }
-    sk_X509_CRL_push(crls, crl);
+
+    if (crl == NULL || !sk_X509_CRL_push(crls, crl))
+        goto error;
+
     /* Try to download delta CRL */
     crldp = X509_get_ext_d2i(x, NID_freshest_crl, NULL, NULL);
     crl = load_crl_crldp(crldp);
     sk_DIST_POINT_pop_free(crldp, DIST_POINT_free);
-    if (crl)
-        sk_X509_CRL_push(crls, crl);
+
+    if (crl != NULL && !sk_X509_CRL_push(crls, crl))
+        goto error;
+
     return crls;
+
+error:
+    X509_CRL_free(crl);
+    sk_X509_CRL_free(crls);
+    return NULL;
 }
 
 void store_setup_crl_download(X509_STORE *st)
